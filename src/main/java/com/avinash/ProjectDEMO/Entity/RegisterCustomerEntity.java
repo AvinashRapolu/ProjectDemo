@@ -1,22 +1,28 @@
-package com.avinash.ProjectDEMO.Model;
+package com.avinash.ProjectDEMO.Entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import javax.persistence.*;
 
-@Data
-@ToString
-@AllArgsConstructor
-@NoArgsConstructor
-public class RegisterCustomer {
-
+@Entity
+public class RegisterCustomerEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
     private String firstName;
     private String lastName;
     private String email;
     private long mobileNo;
     private String password;
-    private CustomerAddress customerAddress;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "customer_address_entity_id")
+    private CustomerAddressEntity customerAddressEntity;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getLastName() {
         return lastName;
@@ -58,11 +64,11 @@ public class RegisterCustomer {
         this.firstName = firstName;
     }
 
-    public CustomerAddress getCustomerAddress() {
-        return customerAddress;
+    public CustomerAddressEntity getCustomerAddressEntity() {
+        return customerAddressEntity;
     }
 
-    public void setCustomerAddress(CustomerAddress customerAddress) {
-        this.customerAddress = customerAddress;
+    public void setCustomerAddressEntity(CustomerAddressEntity customerAddressEntity) {
+        this.customerAddressEntity = customerAddressEntity;
     }
 }

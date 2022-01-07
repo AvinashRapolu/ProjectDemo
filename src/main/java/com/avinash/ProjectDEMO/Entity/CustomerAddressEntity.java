@@ -1,6 +1,15 @@
-package com.avinash.ProjectDEMO.Model;
+package com.avinash.ProjectDEMO.Entity;
 
-public class CustomerAddress {
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class CustomerAddressEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
     private String line1;
     private String line2;
     private int pinCode;
@@ -47,6 +56,14 @@ public class CustomerAddress {
 
     public void setBillingAddress(boolean billingAddress) {
         this.billingAddress = billingAddress;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getPinCode() {
