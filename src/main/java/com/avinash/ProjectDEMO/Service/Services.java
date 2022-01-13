@@ -7,6 +7,8 @@ import com.avinash.ProjectDEMO.Repository.RegisterCustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class Services {
     @Autowired
@@ -34,5 +36,9 @@ public class Services {
 
         registerCustomerRepository.save(rge);
         return "customer is added";
+    }
+    public List customers()
+    {
+        return registerCustomerRepository.findAll();
     }
 }
