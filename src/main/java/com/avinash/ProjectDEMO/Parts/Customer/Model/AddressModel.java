@@ -1,4 +1,4 @@
-package com.avinash.ProjectDEMO.Model;
+package com.avinash.ProjectDEMO.Parts.Customer.Model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class CustomerAddress {
+public class AddressModel {
     private String line1;
     private String line2;
     private int pinCode;

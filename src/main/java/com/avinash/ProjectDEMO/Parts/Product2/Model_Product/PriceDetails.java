@@ -1,4 +1,4 @@
-package com.avinash.ProjectDEMO.Product2.Model_Product;
+package com.avinash.ProjectDEMO.Parts.Product2.Model_Product;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PriceDetails {
-    private String skuCode_pd;
+    private String skuCode;
     private String price;
     private  String currency;
 }

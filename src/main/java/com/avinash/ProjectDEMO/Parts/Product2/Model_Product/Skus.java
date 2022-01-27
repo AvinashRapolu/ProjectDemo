@@ -1,4 +1,4 @@
-package com.avinash.ProjectDEMO.Product2.Model_Product;
+package com.avinash.ProjectDEMO.Parts.Product2.Model_Product;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
