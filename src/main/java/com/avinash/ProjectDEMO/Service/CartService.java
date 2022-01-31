@@ -2,9 +2,9 @@ package com.avinash.ProjectDEMO.Service;
 
 import com.avinash.ProjectDEMO.Parts.Customer.Entity.RegisterEntity;
 import com.avinash.ProjectDEMO.Parts.Customer.Repository.RegisterRepository;
-import com.avinash.ProjectDEMO.Parts.Inventory.Entity.InventoryEntity;
 import com.avinash.ProjectDEMO.Parts.Inventory.Repository.InventoryRepo;
-import com.avinash.ProjectDEMO.Parts.Product2.Entity_Product.EntitySkus;
+import com.avinash.ProjectDEMO.Parts.Product2.Repository.RepositoryPD;
+import com.avinash.ProjectDEMO.Parts.Product2.Repository.RepositoryProduct;
 import com.avinash.ProjectDEMO.Parts.Product2.Repository.RepositorySkus;
 import com.avinash.ProjectDEMO.Parts.cart.Entity.CartEntity;
 import com.avinash.ProjectDEMO.Parts.cart.Model.Cart;
@@ -15,8 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Service
 public class CartService {
@@ -30,6 +31,10 @@ public class CartService {
     RepositorySkus repositorySkus;
     @Autowired
     TokenService tokenService;
+    @Autowired
+    RepositoryPD priceDetails;
+    @Autowired
+    RepositoryProduct repositoryProduct;
 
     public ResponseEntity<String> addCart(Cart cart, String token)
     {
@@ -72,13 +77,36 @@ public class CartService {
         }
         else if(tokenService.validToken(token)) {
             RegisterEntity registerEntity =registerRepository.findByEmail(tokenService.getTokenDetails(token));
-                return registerEntity.getCartEntityList();
+            List<CartEntity> cart =registerEntity.getCartEntityList().stream().collect(Collectors.toList());
+            List finalCart=new ArrayList();
+            AtomicReference<Double> grandTotal= new AtomicReference<>(0.0);
+            cart.forEach(x-> {
+                String code = x.getSkuCode();
+                int quantity= x.getQuantity();
+                Double price= 1.0;
+
+                price= price*(Double.parseDouble(priceDetails.findBySkuCode(x.getSkuCode()).getPrice()));
+                 Double total = (price* quantity);
+                LinkedHashMap<String, String> hm = new LinkedHashMap<>();
+                hm.put("Product",(repositoryProduct.findByProductCode(repositorySkus.findBySkuCode(code).getProductCode())).getProductName());
+                hm.put("Size",repositorySkus.findBySkuCode(code).getSize());
+                hm.put("price",priceDetails.findBySkuCode(x.getSkuCode()).getPrice());
+                hm.put("Quantity",String.valueOf(quantity));
+                hm.put("Total",total+" RS");
+                finalCart.add(hm);
+                grandTotal.updateAndGet(v-> v+total);
+            });
+            finalCart.add("GrandTotal: "+grandTotal+" RS");
+            return finalCart;
+
 
         }
         else return Arrays.asList("token is invalid.");
     }
-    public ResponseEntity<String> removeFromCart()
-    {
+//    public ResponseEntity<String> removeFromCart()
+//    {
+//
+//    }
 
-    }
+
 }

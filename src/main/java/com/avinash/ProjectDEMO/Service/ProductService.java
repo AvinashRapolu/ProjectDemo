@@ -52,20 +52,28 @@ public class ProductService {
     public String addSkus(Skus skus)
     {
         Optional<EntityProduct> productEntity = Optional.ofNullable(repositoryProduct.findByProductCode(skus.getProductCode()));
-        if(productEntity.isPresent()){
-            EntitySkus entitySkus = new EntitySkus();
-            entitySkus.setSkuCode(skus.getSkuCode());
-            entitySkus.setSize(skus.getSize());
-            entitySkus.setProductCode(skus.getProductCode());
-            entitySkus.setProducts(productEntity.get());
-            productEntity.get().getEntitySkus().add(entitySkus);
-            repositoryProduct.save(productEntity.get());
-            return "sku is added.";
-        }
-        else
+        if(productEntity.isPresent())
         {
-            return "no product found.";
+            Optional<EntitySkus> skus1 = Optional.ofNullable(repositorySkus.findBySkuCode(skus.getSkuCode()));
+
+            if (skus1.isPresent()) {
+                return "sku already exist";
+
+            }
+            else {
+                EntitySkus entitySkus = new EntitySkus();
+                entitySkus.setSkuCode(skus.getSkuCode());
+                entitySkus.setSize(skus.getSize());
+                entitySkus.setProductCode(skus.getProductCode());
+                entitySkus.setProducts(productEntity.get());
+                productEntity.get().getEntitySkus().add(entitySkus);
+                repositoryProduct.save(productEntity.get());
+                return "sku is added.";
+
+            }
         }
+        else return "no product found.";
+
     }
     public String addPrice(PriceDetails priceDetails)
     {
