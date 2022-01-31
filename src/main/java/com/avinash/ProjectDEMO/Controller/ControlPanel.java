@@ -6,7 +6,9 @@ import com.avinash.ProjectDEMO.Parts.Inventory.Model.Inventory;
 import com.avinash.ProjectDEMO.Parts.Product2.Model_Product.PriceDetails;
 import com.avinash.ProjectDEMO.Parts.Product2.Model_Product.Product;
 import com.avinash.ProjectDEMO.Parts.Product2.Model_Product.Skus;
+import com.avinash.ProjectDEMO.Parts.cart.Model.Cart;
 import com.avinash.ProjectDEMO.Security_Login.Login;
+import com.avinash.ProjectDEMO.Service.CartService;
 import com.avinash.ProjectDEMO.Service.ProductService;
 import com.avinash.ProjectDEMO.Service.Services;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,8 @@ public class ControlPanel {
     private Services services;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private CartService cartService;
 //===========================================================================================================================
 //login
 
@@ -59,7 +63,7 @@ public class ControlPanel {
     {
         return services.alldetails();
     }
-//===============================================PRODUCT============================================================================
+//===============================================PRODUCT===========================================================================
     @PostMapping("/add-product")
     public String addProduct(@RequestBody Product product)
     {
@@ -82,11 +86,28 @@ public class ControlPanel {
         return productService.allProducts();
     }
 
-//============================================INVENTORY===============================================================================
+//============================================INVENTORY===========================================================================
 
     @PostMapping("/inventory")
     public ResponseEntity<String> inv(@RequestBody Inventory inventory)
     {
         return productService.inv(inventory);
+    }
+
+    @GetMapping("/all-inventory")
+    public List inventory()
+    {
+        return productService.inventory();
+    }
+//===================================================CART======================================================================
+    @PostMapping("/add-to-cart")
+    public ResponseEntity<String> addCart(@RequestBody Cart cart,@RequestHeader String token)
+    {
+        return cartService.addCart(cart,token);
+    }
+    @GetMapping("/cart")
+    public List allCart(@RequestHeader String token)
+    {
+        return cartService.allCart(token);
     }
 }

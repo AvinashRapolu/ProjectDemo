@@ -1,5 +1,6 @@
 package com.avinash.ProjectDEMO.Parts.Customer.Model;
 
+import com.avinash.ProjectDEMO.Parts.cart.Model.Cart;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,4 +20,6 @@ public class RegisterModel {
     private long mobileNo;
     private String password;
     private List<AddressModel> addressModels;
+
+    private List<Cart> carts;
 }

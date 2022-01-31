@@ -1,6 +1,7 @@
 package com.avinash.ProjectDEMO.Parts.Customer.Entity;
 
 import com.avinash.ProjectDEMO.CustomValidations.PhoneNumber;
+import com.avinash.ProjectDEMO.Parts.cart.Entity.CartEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,6 +33,10 @@ public class RegisterEntity {
     @OneToMany(cascade = CascadeType.ALL)
     @JsonIgnoreProperties("registerEntity")
     private List<AddressEntity> addressEntity;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("registerEntity")
+    private List<CartEntity> cartEntityList;
 
     @Override
     public String toString() {

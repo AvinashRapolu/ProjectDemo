@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -85,6 +86,7 @@ public class ProductService {
         return repositoryProduct.findAll();
     }
 
+//===================================== Inventory =================================================================================
     public ResponseEntity<String> inv(Inventory inventory)
     {
         Optional<EntitySkus> entitySkus = Optional.ofNullable(repositorySkus.findBySkuCode(inventory.getSkuCode()));
@@ -98,5 +100,10 @@ public class ProductService {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("inventory is updated.");
         }
         else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("no Product found");
+    }
+    public List inventory()
+    {
+        List hi = (repositorySkus.findAll()).stream().map(x-> x.getInventoryEntity()).collect(Collectors.toList());
+        return hi;
     }
 }

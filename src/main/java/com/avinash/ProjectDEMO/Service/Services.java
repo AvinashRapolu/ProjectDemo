@@ -115,12 +115,6 @@ public RegisterEntity convertCustomerModelToEntity(RegisterModel registerModel){
 
     return customerEntity;
 }
-public String password()
-{
-
-
-    return"";
-}
 
     //converting AddressModel to AddressEntity
     public AddressEntity convertAddressModelToEntity(AddressModel addressModel){
