@@ -2,7 +2,9 @@ package com.avinash.ProjectDEMO.Service;
 
 import com.avinash.ProjectDEMO.Parts.Customer.Entity.RegisterEntity;
 import com.avinash.ProjectDEMO.Parts.Customer.Repository.RegisterRepository;
+import com.avinash.ProjectDEMO.Parts.Inventory.Entity.InventoryEntity;
 import com.avinash.ProjectDEMO.Parts.Inventory.Repository.InventoryRepo;
+import com.avinash.ProjectDEMO.Parts.Product2.Entity_Product.EntitySkus;
 import com.avinash.ProjectDEMO.Parts.Product2.Repository.RepositoryPD;
 import com.avinash.ProjectDEMO.Parts.Product2.Repository.RepositoryProduct;
 import com.avinash.ProjectDEMO.Parts.Product2.Repository.RepositorySkus;
@@ -15,7 +17,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -45,24 +50,43 @@ public class CartService {
         else if(tokenService.validToken(token)) {
             RegisterEntity registerEntity =registerRepository.findByEmail(tokenService.getTokenDetails(token));
             int quantityA = inventoryRepo.findBySkuCode(cart.getSkuCode()).getQuantityAvailable();
+            List<CartEntity> cartEntityList;
             if(quantityA- cart.getQuantity()>=0)
             {
-                CartEntity cartEntity=new CartEntity();
-                cartEntity.setCustomerEmail(cart.getCustomerEmail());
-                cartEntity.setOrderCode(cart.getOrderCode());
-                cartEntity.setQuantity(cart.getQuantity());
-                cartEntity.setSkuCode(cart.getSkuCode());
-                registerEntity.getCartEntityList().add(cartEntity);
-                registerRepository.save(registerEntity);
-                //**************************** update inventory ********************************************
-               /* EntitySkus entitySkus = repositorySkus.findBySkuCode(cart.getSkuCode());
+                if(cartRepo.existsByCustomerEmail(tokenService.getTokenDetails(token))&& cartRepo.existsBySkuCode(cart.getSkuCode()))
+                {
+                    cartRepo.updateByEmailAndSkuCode(tokenService.getTokenDetails(token),cart.getSkuCode(),cart.getQuantity());
+
+
+                    EntitySkus entitySkus = repositorySkus.findBySkuCode(cart.getSkuCode());
                     InventoryEntity ie =new InventoryEntity();
                     ie.setSkuCode(cart.getSkuCode());
                     ie.setQuantityAvailable(quantityA- cart.getQuantity());
                     entitySkus.setInventoryEntity(ie);
-                    repositorySkus.save(entitySkus); */
-                //************************************************************************
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body("product is added to cart");
+                    repositorySkus.save(entitySkus);
+                    return ResponseEntity.status(HttpStatus.ACCEPTED).body("Cart is updated.");
+
+                }
+                else
+                {
+                    CartEntity cartEntity = new CartEntity();
+                    cartEntity.setCustomerEmail(tokenService.getTokenDetails(token));
+                    cartEntity.setOrderCode(cart.getOrderCode());
+                    cartEntity.setQuantity(cart.getQuantity());
+                    cartEntity.setSkuCode(cart.getSkuCode());
+                    registerEntity.getCartEntityList().add(cartEntity);
+                    registerRepository.save(registerEntity);
+                    //**************************** update inventory ********************************************
+                    EntitySkus entitySkus = repositorySkus.findBySkuCode(cart.getSkuCode());
+                    InventoryEntity ie =new InventoryEntity();
+                    ie.setSkuCode(cart.getSkuCode());
+                    ie.setQuantityAvailable(quantityA- cart.getQuantity());
+                    entitySkus.setInventoryEntity(ie);
+                    repositorySkus.save(entitySkus);
+                    //************************************************************************
+                    return ResponseEntity.status(HttpStatus.ACCEPTED).body("product is added to cart");
+                }
+
             }
             else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("limited stock; available = "+quantityA);
 
@@ -88,7 +112,8 @@ public class CartService {
                 price= price*(Double.parseDouble(priceDetails.findBySkuCode(x.getSkuCode()).getPrice()));
                  Double total = (price* quantity);
                 LinkedHashMap<String, String> hm = new LinkedHashMap<>();
-                hm.put("Product",(repositoryProduct.findByProductCode(repositorySkus.findBySkuCode(code).getProductCode())).getProductName());
+                hm.put("Product",(repositoryProduct.findByProductCode(repositorySkus.findBySkuCode(code)
+                                                                                    .getProductCode())).getProductName());
                 hm.put("Size",repositorySkus.findBySkuCode(code).getSize());
                 hm.put("price",priceDetails.findBySkuCode(x.getSkuCode()).getPrice());
                 hm.put("Quantity",String.valueOf(quantity));
@@ -103,10 +128,5 @@ public class CartService {
         }
         else return Arrays.asList("token is invalid.");
     }
-//    public ResponseEntity<String> removeFromCart()
-//    {
-//
-//    }
-
 
 }

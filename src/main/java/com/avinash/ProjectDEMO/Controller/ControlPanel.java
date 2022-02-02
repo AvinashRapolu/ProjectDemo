@@ -26,8 +26,7 @@ public class ControlPanel {
     private ProductService productService;
     @Autowired
     private CartService cartService;
-//===========================================================================================================================
-//login
+//============================================== login ==========================================================================
 
     @RequestMapping(value ="/login")
     public String login(@Valid @RequestBody Login loginModel)  {
@@ -110,4 +109,10 @@ public class ControlPanel {
     {
         return cartService.allCart(token);
     }
+
+//    @PostMapping("/update-cart")
+//    public ResponseEntity<String> updateCart(@RequestHeader String token,@RequestBody Cart cart)
+//    {
+//        return cartService.updateCart(token, cart);
+//    }
 }
