@@ -22,4 +22,5 @@ public class RegisterModel {
     private List<AddressModel> addressModels;
 
     private List<Cart> carts;
+
 }

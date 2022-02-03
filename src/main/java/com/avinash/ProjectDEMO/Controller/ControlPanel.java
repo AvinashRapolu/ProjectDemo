@@ -62,7 +62,7 @@ public class ControlPanel {
     {
         return services.alldetails();
     }
-//===============================================PRODUCT===========================================================================
+//===============================================PRODUCT========================================================================
     @PostMapping("/add-product")
     public String addProduct(@RequestBody Product product)
     {
@@ -85,7 +85,7 @@ public class ControlPanel {
         return productService.allProducts();
     }
 
-//============================================INVENTORY===========================================================================
+//============================================INVENTORY========================================================================
 
     @PostMapping("/inventory")
     public ResponseEntity<String> inv(@RequestBody Inventory inventory)
@@ -99,7 +99,7 @@ public class ControlPanel {
         return productService.inventory();
     }
 //===================================================CART======================================================================
-    @PostMapping("/add-to-cart")
+    @PostMapping("/add-update-cart")
     public ResponseEntity<String> addCart(@RequestBody Cart cart,@RequestHeader String token)
     {
         return cartService.addCart(cart,token);
@@ -110,9 +110,15 @@ public class ControlPanel {
         return cartService.allCart(token);
     }
 
-//    @PostMapping("/update-cart")
-//    public ResponseEntity<String> updateCart(@RequestHeader String token,@RequestBody Cart cart)
-//    {
-//        return cartService.updateCart(token, cart);
-//    }
+    @GetMapping ("/order")
+    public ResponseEntity<String> order(@RequestHeader String token,@RequestBody AddressModel addressModel)
+    {
+        return cartService.placeOrder(token,addressModel);
+    }
+    @PostMapping("/status")
+    public ResponseEntity<String> statusUpdate(@RequestHeader String orderCode,@RequestHeader String status)
+    {
+        return cartService.updateStatus(orderCode,status);
+    }
+
 }

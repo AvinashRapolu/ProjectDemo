@@ -22,6 +22,8 @@ public class Services {
     RegisterRepository registerRepository;
     @Autowired
     TokenService tokenService;
+    @Autowired
+    CartService cartService;
 
 
     public ResponseEntity<String> addCustomer(RegisterModel registerModel)
@@ -46,27 +48,6 @@ public class Services {
         return registerRepository.findAll();
     }
 
-//    public ResponseEntity<String> addAddress(AddressModel addressModel, String email)
-//    {
-//        RegisterEntity registerEntity = registerRepository.findByEmail(email);
-//        List<AddressEntity> addressEntityList;
-//        if(registerRepository.findByEmail(email)==null){
-//            addressEntityList = new ArrayList<>();
-//            return ResponseEntity.status(HttpStatus.CREATED).body("No user found. \n");
-//        }
-//        else{
-//            addressEntityList = registerEntity.getAddressEntity();
-//            AddressEntity addressEntity = convertAddressModelToEntity(addressModel);
-//            addressEntity.setRegisterEntity(registerEntity);
-//            addressEntityList.add(addressEntity);
-//
-//            registerRepository.save(registerEntity);
-//            return ResponseEntity.status(HttpStatus.CREATED).body("Address added. \n");
-//        }
-//
-//    }
-
-
     public ResponseEntity<String> addAddress(AddressModel addressModel,String token){
         if(token.isEmpty())
         {
@@ -79,9 +60,11 @@ public class Services {
             addressEntityList = registerEntity.getAddressEntity();
             AddressEntity addressEntity = convertAddressModelToEntity(addressModel);
             addressEntity.setRegisterEntity(registerEntity);
+
             addressEntityList.add(addressEntity);
 
             registerRepository.save(registerEntity);
+
             return ResponseEntity.status(HttpStatus.CREATED).body("Address added. \n");
 
         }
@@ -169,8 +152,6 @@ public RegisterEntity convertCustomerModelToEntity(RegisterModel registerModel){
     }
     public String logout(String encryptedToken){
         if(tokenService.validToken(encryptedToken) && !tokenService.getTokenDetails(encryptedToken).isEmpty())
-
-            // should develop invalidate token logic
             return "Logout Success";
         else{
             return "Not Logged In";
