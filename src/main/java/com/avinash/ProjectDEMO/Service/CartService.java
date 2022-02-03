@@ -165,11 +165,19 @@ public class CartService
         OrderEntity orderEntity=new OrderEntity();
             orderEntity.setOrderStatus("received");
             orderEntity.setOrderCode(uniqueID);
-//            orderEntity.setShippingAddressEntity(convertAddressModelToShipping(addressModel));
+           // ============================================================================
+        ShippingAddressEntity shipping = new ShippingAddressEntity();
+        shipping.setLine1(addressModel.getLine1());
+        shipping.setLine2(addressModel.getLine2());
+        shipping.setCountry(addressModel.getCountry());
+        shipping.setPinCode(addressModel.getPinCode());
+        shipping.setState(addressModel.getState());
+        //=============================================================================
+            orderEntity.setShippingAddressEntity(shipping);
             registerEntity.getOrderEntityList().add(orderEntity);
             registerRepository.save(registerEntity);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Order Placed  "+uniqueID);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Order Placed "+uniqueID);
     }
 
     public ResponseEntity<String> updateStatus(String orderCode,String OrderStatus)
@@ -178,19 +186,19 @@ public class CartService
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Status Updated");
     }
 
-    public ResponseEntity<String> returnProduct(String token,String skucode,String ordercode )
+    public ResponseEntity<String> returnProduct(String token,int quantity,String orderCode )
     {
-        RegisterEntity registerEntity=registerRepository.findByEmail(tokenService.getTokenDetails(token));
-
-        OrderEntity orderEntity= orderRepo.findByOrderCode()
+        CartEntity cart=cartRepo.findByCustomerEmail(tokenService.getTokenDetails(token));
 ////        **************************** update inventory ********************************************
-//                    EntitySkus entitySkus = repositorySkus.findBySkuCode(cart.getSkuCode());
-//                    InventoryEntity ie =new InventoryEntity();
-//                    ie.setSkuCode(cart.getSkuCode());
-//                    ie.setQuantityAvailable(quantityA- cart.getQuantity());
-//                    entitySkus.setInventoryEntity(ie);
-//                    repositorySkus.save(entitySkus);
+                    EntitySkus entitySkus = repositorySkus.findBySkuCode(cart.getSkuCode());
+                    InventoryEntity ie =new InventoryEntity();
+                    InventoryEntity entity= inventoryRepo.findBySkuCode(cart.getSkuCode());
+                    ie.setSkuCode(cart.getSkuCode());
+                    ie.setQuantityAvailable(quantity+entity.getQuantityAvailable());
+                    entitySkus.setInventoryEntity(ie);
+                    repositorySkus.save(entitySkus);
 ////                    ************************************************************************
+        orderRepo.updateByOrderCode(orderCode,"Returned");
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Product returned");
     }
 

@@ -15,9 +15,9 @@ public class OrderEntity {
 
     @Id
     private String orderCode;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private ShippingAddressEntity shippingAddressEntity;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private BillingAddressEntity billingAddressEntity;
 
     @ManyToOne(cascade = CascadeType.ALL)

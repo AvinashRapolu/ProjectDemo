@@ -121,4 +121,10 @@ public class ControlPanel {
         return cartService.updateStatus(orderCode,status);
     }
 
+    @PostMapping("/return")
+    public ResponseEntity<String> returnService(@RequestHeader String token,@RequestHeader int quantity,@RequestHeader String orderCode)
+    {
+        return cartService.returnProduct(token,quantity,orderCode);
+    }
+
 }
